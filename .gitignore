@@ -1,2 +1,3 @@
 venv
 scripts/YuboxInfluxDbToken.json
+__pycache__

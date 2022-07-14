@@ -1,0 +1,16 @@
+{
+    "InfluxDb": {
+        "url": null,
+        "token": {
+            "yubox": {
+                "read": null,
+                "write": null
+            }
+        }
+    },
+
+    "ChirpStack": {
+        "url": null,
+        "token": null
+    }
+}
