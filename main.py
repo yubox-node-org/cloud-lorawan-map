@@ -1,5 +1,8 @@
 import logging
 import json
+from threading import Thread
+from time import sleep
+from flask import Flask, render_template
 from scripts.logger import MyHandler
 from scripts.YuboxInfluxDb import YuboxInfluxDb
 from scripts.YuboxChirpStack import getGatewayChirpStack
@@ -9,25 +12,46 @@ from scripts.YuboxMapLora import createHtmlMapLora
 log = logging.getLogger('root')
 log.setLevel('DEBUG')
 log.addHandler(MyHandler())
+app = Flask(__name__)
 
-# Cargo el archivo Json
-jsonConfig = json.load(open("scripts/setup.json"))
+@app.route("/")
+def home_map():
+    return render_template("mapa.html")
 
-# Creo la base de Datos
-jsonInfluxDb = jsonConfig["InfluxDb"]
+def ThreadUpdateMap(InfluxDb,gateways):
+    while(True):
+        print("Actualizando Mapa")
+        createHtmlMapLora(InfluxDb, gateways)
+        sleep(60)
 
-urlInfluxDb = jsonInfluxDb["url"]
-tokenInfluxDb = jsonInfluxDb["token"]
+if __name__ == "__main__":
+    # Cargo el archivo Json
+    jsonConfig = json.load(open("scripts/setup.json"))
 
-InfluxDb = YuboxInfluxDb(url=urlInfluxDb, jsonToken = tokenInfluxDb)
+    # Creo la base de Datos
+    jsonInfluxDb = jsonConfig["InfluxDb"]
 
-# Obtengo los gateways
-jsonChirpStack = jsonConfig["ChirpStack"]
+    urlInfluxDb = jsonInfluxDb["url"]
+    tokenInfluxDb = jsonInfluxDb["token"]
 
-urlChirpStack = jsonChirpStack["url"]
-tokenChirpStack = jsonChirpStack["token"]
+    InfluxDb = YuboxInfluxDb(url=urlInfluxDb, jsonToken = tokenInfluxDb)
 
-gateways = getGatewayChirpStack(url = urlChirpStack, token = tokenChirpStack)
-print(gateways)
+    # Obtengo los gateways
+    jsonChirpStack = jsonConfig["ChirpStack"]
 
-createHtmlMapLora(InfluxDb, gateways)
+    urlChirpStack = jsonChirpStack["url"]
+    tokenChirpStack = jsonChirpStack["token"]
+
+    gateways = getGatewayChirpStack(url = urlChirpStack, token = tokenChirpStack)
+    Thread(target=ThreadUpdateMap, daemon=True, args=(InfluxDb,gateways,)).start()
+
+    # Inicio el APP
+    app.run()
+
+
+
+
+
+
+
+

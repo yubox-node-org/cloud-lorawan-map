@@ -1,7 +1,7 @@
 import logging
 import re
 import requests
-import random
+import random as rd
 
 # Sistema de Log
 log = logging.getLogger('InfluxDb')
@@ -20,6 +20,11 @@ def getGatewayChirpStack(url:str, token:str):
     # Peticion
     gateways = seccion.get(getUrl, params= data)
 
+    # Colores
+    "UserWarning: color argument of Icon should be one of: {'darkpurple', 'white', 'black', 'pink', 'lightred', 'lightgreen', 'orange', 'cadetblue', 'gray', 'lightgray', 'purple', 'darkgreen', 'red', 'darkred', 'darkblue', 'beige', 'lightblue', 'blue', 'green'}."
+    listColor = ['darkgreen','darkblue', 'purple',  'darkred',  'lightgreen' ,'darkpurple']
+    contador = 0
+
     if gateways.reason == "OK":
         log.debug("Peticion ChirpstackAPI correcta")
         dictGateways = gateways.json()
@@ -36,16 +41,21 @@ def getGatewayChirpStack(url:str, token:str):
             latitude = gateway["location"]["latitude"]
             longitude = gateway["location"]["longitude"]
 
-            color = ["#"+''.join([random.choice('ABCDEF0123456789') for i in range(6)])]
+            color = listColor[contador]
+            contador+=1
+
 
             # Agrego las id al dict
             dic[id] = {
                 "name": name,
-                "color": color[0],
+                "color": color,
                 "latitud": latitude,
                 "longitud": longitude
             }
+        print(dic)
+
         return dic
+
 
     else:
         log.error(gateways.text)

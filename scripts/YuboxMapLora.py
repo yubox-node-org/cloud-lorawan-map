@@ -47,8 +47,8 @@ def CreateMapFolium(latitude, longitude, gateways)->folium.Map:
 
 def createHtmlMapLora(YuboxInfluxDb, gateways):
     # Guayaquil latitude and longitude values
-    latitude = -2.18333
-    longitude = -79.8833
+    latitude = -2.167758
+    longitude = -79.9047
     
     # Creo el Folium Mapa
     LoraMap = CreateMapFolium(latitude=latitude, longitude=longitude, gateways=gateways)
