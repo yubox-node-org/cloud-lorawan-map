@@ -1,8 +1,9 @@
-from scripts.YuboxInfluxDb import YuboxInfluxDb
-from scripts.YuboxChirpStack import getGatewayChirpStack
-from scripts.logger import MyHandler
 import logging
 import json
+from scripts.logger import MyHandler
+from scripts.YuboxInfluxDb import YuboxInfluxDb
+from scripts.YuboxChirpStack import getGatewayChirpStack
+from scripts.YuboxMapLora import createHtmlMapLora
 
 # Configuro el logger
 log = logging.getLogger('root')
@@ -28,3 +29,5 @@ tokenChirpStack = jsonChirpStack["token"]
 
 gateways = getGatewayChirpStack(url = urlChirpStack, token = tokenChirpStack)
 print(gateways)
+
+createHtmlMapLora(InfluxDb, gateways)
